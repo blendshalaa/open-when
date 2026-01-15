@@ -4,15 +4,17 @@
  */
 
 /**
- * Encode letter data into a Base64 string.
+ * Encode letter data into a URL-safe Base64 string.
  * @param {Object} data - The letter data { id, label, content, recipient }.
  * @returns {string} - Base64 encoded string.
  */
 export const encodeLetter = (data) => {
     try {
         const jsonString = JSON.stringify(data);
-        // Use btoa for Base64 encoding, handling unicode characters
-        return btoa(unescape(encodeURIComponent(jsonString)));
+        // Encode to Base64
+        const base64 = btoa(unescape(encodeURIComponent(jsonString)));
+        // Make URL-safe: replace + with -, / with _, and remove =
+        return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     } catch (e) {
         console.error("Failed to encode letter:", e);
         return null;
@@ -20,14 +22,19 @@ export const encodeLetter = (data) => {
 };
 
 /**
- * Decode a Base64 string back into letter data.
+ * Decode a URL-safe Base64 string back into letter data.
  * @param {string} token - The Base64 encoded string.
  * @returns {Object|null} - The letter data object or null if invalid.
  */
 export const decodeLetter = (token) => {
     try {
-        // Use atob for Base64 decoding, handling unicode characters
-        const jsonString = decodeURIComponent(escape(atob(token)));
+        // Restore standard Base64 characters
+        let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
+        // Pad with = if needed
+        while (base64.length % 4) {
+            base64 += '=';
+        }
+        const jsonString = decodeURIComponent(escape(atob(base64)));
         return JSON.parse(jsonString);
     } catch (e) {
         console.error("Failed to decode letter:", e);
