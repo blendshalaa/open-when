@@ -1,0 +1,134 @@
+.create-page {
+    width: 100%;
+    max-width: 600px;
+    padding: 40px;
+    transform: rotate(-1deg);
+    /* Slight imperfection */
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--paper-aged);
+    padding-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+    color: var(--ink-blue);
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    color: var(--pencil-gray);
+    font-style: italic;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    color: var(--ink-faded);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.handwritten-textarea {
+    min-height: 200px;
+    resize: vertical;
+    line-height: 1.8;
+    background-image: linear-gradient(transparent 95%, var(--paper-aged) 95%);
+    background-size: 100% 2em;
+    /* Lined paper effect */
+}
+
+.seal-button {
+    margin-top: 20px;
+    padding: 15px 30px;
+    background-color: var(--stamp-red);
+    color: white;
+    border: none;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    /* Imperfect circle/oval */
+    font-size: 1.2rem;
+    align-self: center;
+    box-shadow: 2px 4px 8px rgba(192, 57, 43, 0.3);
+    transform: rotate(2deg);
+}
+
+.seal-button:hover {
+    transform: rotate(0deg) scale(1.05);
+}
+
+.seal-button:disabled {
+    background-color: var(--pencil-gray);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Success State */
+.success-container {
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.link-section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px dashed var(--pencil-gray);
+}
+
+.link-box {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.link-box input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--paper-aged);
+    background: white;
+    color: var(--ink-faded);
+    font-family: monospace;
+}
+
+.link-box button {
+    padding: 8px 15px;
+    background: var(--ink-blue);
+    color: white;
+    border: none;
+}
+
+.create-another {
+    background: transparent;
+    border: none;
+    color: var(--ink-faded);
+    text-decoration: underline;
+    margin-top: 10px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

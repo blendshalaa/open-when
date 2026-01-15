@@ -1,0 +1,169 @@
+.view-page {
+    width: 100%;
+    max-width: 800px;
+    min-height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    box-shadow: none;
+}
+
+/* Sealed Envelope View */
+.sealed-view {
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.envelope-container {
+    width: 350px;
+    height: 240px;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.envelope-container:hover {
+    transform: scale(1.02) rotate(1deg);
+}
+
+.envelope {
+    width: 100%;
+    height: 100%;
+    background-color: var(--paper-aged);
+    position: relative;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    /* Hide the content initially */
+}
+
+/* Envelope Flaps (CSS Art) */
+.flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 175px solid transparent;
+    border-right: 175px solid transparent;
+    border-top: 140px solid #e6dabf;
+    /* Slightly darker than paper-aged */
+    z-index: 3;
+    transform-origin: top;
+    transition: transform 0.6s ease;
+}
+
+.pocket {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 175px solid transparent;
+    border-right: 175px solid transparent;
+    border-bottom: 130px solid #f5ebd9;
+    z-index: 2;
+}
+
+.content-wrapper {
+    z-index: 4;
+    text-align: center;
+    width: 80%;
+    transform: rotate(-2deg);
+}
+
+.stamp {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 70px;
+    border: 2px dashed var(--stamp-red);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--stamp-red);
+    font-weight: bold;
+    transform: rotate(5deg);
+    opacity: 0.7;
+    font-size: 0.8rem;
+}
+
+.to-text {
+    font-family: var(--font-hand);
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: var(--ink-blue);
+}
+
+.open-when-text {
+    font-family: var(--font-hand);
+    font-size: 1.5rem;
+    color: var(--ink-blue);
+    border-bottom: 2px solid var(--ink-blue);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.click-hint {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: var(--pencil-gray);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.envelope-container:hover .click-hint {
+    opacity: 1;
+}
+
+/* Opened View */
+.opened-view {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.letter-paper {
+    width: 100%;
+    max-width: 600px;
+    background-color: var(--paper-cream);
+    padding: 60px;
+    box-shadow: var(--shadow-deep);
+    min-height: 500px;
+    position: relative;
+    transform: rotate(0.5deg);
+}
+
+.letter-header {
+    text-align: right;
+    margin-bottom: 40px;
+    color: var(--ink-faded);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.letter-body {
+    font-size: 1.1rem;
+    white-space: pre-wrap;
+    margin-bottom: 60px;
+}
+
+.letter-footer {
+    text-align: right;
+    font-family: var(--font-hand);
+    font-size: 1.2rem;
+}
+
+.envelope-remains {
+    margin-top: 30px;
+    color: var(--pencil-gray);
+    font-style: italic;
+}
+
+.fade-in {
+    animation: fadeIn 1s ease;
+}
