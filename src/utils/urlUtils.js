@@ -1,20 +1,35 @@
-/**
- * Utilities for encoding and decoding letter data to/from URL parameters.
- * Uses Base64 encoding to store data in the URL hash or query param.
- */
+import LZString from 'lz-string';
 
 /**
- * Encode letter data into a URL-safe Base64 string.
- * @param {Object} data - The letter data { id, label, content, recipient }.
- * @returns {string} - Base64 encoded string.
+ * Key mapping for shorter JSON
+ */
+const KEY_MAP = {
+    id: 'i',
+    recipient: 'r',
+    label: 'l',
+    content: 'c',
+    createdAt: 't'
+};
+
+const REVERSE_KEY_MAP = Object.fromEntries(
+    Object.entries(KEY_MAP).map(([k, v]) => [v, k])
+);
+
+/**
+ * Encode letter data into a compressed URL-safe string.
  */
 export const encodeLetter = (data) => {
     try {
-        const jsonString = JSON.stringify(data);
-        // Encode to Base64
-        const base64 = btoa(unescape(encodeURIComponent(jsonString)));
-        // Make URL-safe: replace + with -, / with _, and remove =
-        return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        // Map keys to short versions
+        const shortData = {};
+        for (const [key, value] of Object.entries(data)) {
+            if (KEY_MAP[key]) {
+                shortData[KEY_MAP[key]] = value;
+            }
+        }
+
+        const jsonString = JSON.stringify(shortData);
+        return LZString.compressToEncodedURIComponent(jsonString);
     } catch (e) {
         console.error("Failed to encode letter:", e);
         return null;
@@ -22,20 +37,42 @@ export const encodeLetter = (data) => {
 };
 
 /**
- * Decode a URL-safe Base64 string back into letter data.
- * @param {string} token - The Base64 encoded string.
- * @returns {Object|null} - The letter data object or null if invalid.
+ * Decode a compressed URL-safe string back into letter data.
  */
 export const decodeLetter = (token) => {
+    if (!token) return null;
+
     try {
-        // Restore standard Base64 characters
-        let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
-        // Pad with = if needed
-        while (base64.length % 4) {
-            base64 += '=';
+        let jsonString;
+
+        // Try LZ decompression first (new format)
+        const decompressed = LZString.decompressFromEncodedURIComponent(token);
+
+        if (decompressed) {
+            jsonString = decompressed;
+        } else {
+            // Fallback to old Base64 format for backward compatibility
+            let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
+            while (base64.length % 4) base64 += '=';
+            jsonString = decodeURIComponent(escape(atob(base64)));
         }
-        const jsonString = decodeURIComponent(escape(atob(base64)));
-        return JSON.parse(jsonString);
+
+        const data = JSON.parse(jsonString);
+
+        // If it's the new short-key format, map it back
+        if (data.i || data.c || data.l) {
+            const longData = {};
+            for (const [key, value] of Object.entries(data)) {
+                if (REVERSE_KEY_MAP[key]) {
+                    longData[REVERSE_KEY_MAP[key]] = value;
+                } else {
+                    longData[key] = value;
+                }
+            }
+            return longData;
+        }
+
+        return data;
     } catch (e) {
         console.error("Failed to decode letter:", e);
         return null;
@@ -44,8 +81,7 @@ export const decodeLetter = (token) => {
 
 /**
  * Generate a unique ID for a letter.
- * @returns {string} - A random unique ID.
  */
 export const generateId = () => {
-    return Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+    return Math.random().toString(36).substr(2, 6); // Shorter ID is fine for local storage
 };
