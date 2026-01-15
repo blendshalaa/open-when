@@ -1,35 +1,27 @@
 import LZString from 'lz-string';
 
 /**
- * Key mapping for shorter JSON
+ * Simple hash function to generate a consistent ID from content.
+ * This allows us to track "opened" status without storing the ID in the URL.
  */
-const KEY_MAP = {
-    id: 'i',
-    recipient: 'r',
-    label: 'l',
-    content: 'c',
-    createdAt: 't'
+const hashString = (str) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0;
+    }
+    return Math.abs(hash).toString(36);
 };
 
-const REVERSE_KEY_MAP = Object.fromEntries(
-    Object.entries(KEY_MAP).map(([k, v]) => [v, k])
-);
-
 /**
- * Encode letter data into a compressed URL-safe string.
+ * Encode letter data into a highly compressed string.
+ * Format: recipient|label|content
  */
 export const encodeLetter = (data) => {
     try {
-        // Map keys to short versions
-        const shortData = {};
-        for (const [key, value] of Object.entries(data)) {
-            if (KEY_MAP[key]) {
-                shortData[KEY_MAP[key]] = value;
-            }
-        }
-
-        const jsonString = JSON.stringify(shortData);
-        return LZString.compressToEncodedURIComponent(jsonString);
+        const payload = `${data.recipient || ''}|${data.label}|${data.content}`;
+        return LZString.compressToEncodedURIComponent(payload);
     } catch (e) {
         console.error("Failed to encode letter:", e);
         return null;
@@ -37,42 +29,44 @@ export const encodeLetter = (data) => {
 };
 
 /**
- * Decode a compressed URL-safe string back into letter data.
+ * Decode a compressed string back into letter data.
  */
 export const decodeLetter = (token) => {
     if (!token) return null;
 
     try {
-        let jsonString;
-
-        // Try LZ decompression first (new format)
         const decompressed = LZString.decompressFromEncodedURIComponent(token);
 
-        if (decompressed) {
-            jsonString = decompressed;
+        if (decompressed && decompressed.includes('|')) {
+            // New delimited format: recipient|label|content
+            const [recipient, label, content] = decompressed.split('|');
+            const data = { recipient, label, content };
+            // Generate ID on the fly for storage tracking
+            data.id = hashString(decompressed);
+            return data;
         } else {
-            // Fallback to old Base64 format for backward compatibility
-            let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
-            while (base64.length % 4) base64 += '=';
-            jsonString = decodeURIComponent(escape(atob(base64)));
-        }
-
-        const data = JSON.parse(jsonString);
-
-        // If it's the new short-key format, map it back
-        if (data.i || data.c || data.l) {
-            const longData = {};
-            for (const [key, value] of Object.entries(data)) {
-                if (REVERSE_KEY_MAP[key]) {
-                    longData[REVERSE_KEY_MAP[key]] = value;
-                } else {
-                    longData[key] = value;
-                }
+            // Fallback for JSON formats (Base64 or LZ-JSON)
+            let jsonString = decompressed;
+            if (!jsonString) {
+                let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
+                while (base64.length % 4) base64 += '=';
+                jsonString = decodeURIComponent(escape(atob(base64)));
             }
-            return longData;
-        }
 
-        return data;
+            const data = JSON.parse(jsonString);
+
+            // Handle short-key JSON format
+            if (data.i || data.c || data.l) {
+                return {
+                    id: data.i,
+                    recipient: data.r,
+                    label: data.l,
+                    content: data.c,
+                    createdAt: data.t
+                };
+            }
+            return data;
+        }
     } catch (e) {
         console.error("Failed to decode letter:", e);
         return null;
@@ -80,8 +74,9 @@ export const decodeLetter = (token) => {
 };
 
 /**
- * Generate a unique ID for a letter.
+ * Generate a unique ID (only used for initial creation if needed, 
+ * but now we mostly use hashString).
  */
 export const generateId = () => {
-    return Math.random().toString(36).substr(2, 6); // Shorter ID is fine for local storage
+    return Math.random().toString(36).substr(2, 6);
 };
