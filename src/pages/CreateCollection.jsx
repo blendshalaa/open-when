@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { encodeCollection, generateId } from '../utils/urlUtils';
+import { encodeCollection, generateId, shortenUrl } from '../utils/urlUtils';
 import AudioRecorder from '../components/AudioRecorder';
 import '../styles/CreateCollection.css';
 
@@ -10,6 +10,9 @@ const CreateCollection = () => {
         { id: generateId(), type: 'text', label: '', content: '', audioData: null, releaseDate: null, scheduleEnabled: false }
     ]);
     const [generatedLink, setGeneratedLink] = useState(null);
+    const [shortLink, setShortLink] = useState(null);
+    const [isShortening, setIsShortening] = useState(false);
+    const [shorteningError, setShorteningError] = useState(null);
     const [isCopied, setIsCopied] = useState(false);
 
     const addLetter = () => {
@@ -82,14 +85,31 @@ const CreateCollection = () => {
         setGeneratedLink(link);
     };
 
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(generatedLink);
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text);
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000);
     };
 
+    const handleShorten = async () => {
+        setIsShortening(true);
+        setShorteningError(null);
+        try {
+            const short = await shortenUrl(generatedLink);
+            if (short) {
+                setShortLink(short);
+            }
+        } catch (e) {
+            setShorteningError(e.message);
+        } finally {
+            setIsShortening(false);
+        }
+    };
+
     const resetForm = () => {
         setGeneratedLink(null);
+        setShortLink(null);
+        setShorteningError(null);
         setCollectionName('');
         setRecipient('');
         setLetters([{ id: generateId(), type: 'text', label: '', content: '', audioData: null, releaseDate: null, scheduleEnabled: false }]);
@@ -289,11 +309,23 @@ const CreateCollection = () => {
                             </p>
                         )}
                         <div className="link-box">
-                            <input type="text" readOnly value={generatedLink} />
-                            <button onClick={copyToClipboard}>
+                            <input type="text" readOnly value={shortLink || generatedLink} />
+                            <button onClick={() => copyToClipboard(shortLink || generatedLink)}>
                                 {isCopied ? 'Copied!' : 'Copy Link'}
                             </button>
                         </div>
+                        {!shortLink && (
+                            <div className="shorten-group">
+                                <button
+                                    className="shorten-btn"
+                                    onClick={handleShorten}
+                                    disabled={isShortening}
+                                >
+                                    {isShortening ? 'Shortening...' : '✨ Make it even shorter'}
+                                </button>
+                                {shorteningError && <p className="shorten-error">{shorteningError}</p>}
+                            </div>
+                        )}
                         <button className="create-another" onClick={resetForm}>
                             Write Another Collection
                         </button>

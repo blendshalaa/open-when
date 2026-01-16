@@ -34,21 +34,27 @@ export const generateId = () => {
  */
 export const encodeCollection = (collection) => {
     try {
-        const payload = JSON.stringify({
+        const payload = {
             i: collection.id,
-            n: collection.name || '',
-            r: collection.recipient || '',
-            l: collection.letters.map(letter => ({
+            t: collection.createdAt ? new Date(collection.createdAt).getTime() : Date.now()
+        };
+
+        if (collection.name) payload.n = collection.name;
+        if (collection.recipient) payload.r = collection.recipient;
+
+        payload.l = collection.letters.map(letter => {
+            const l = {
                 i: letter.id,
-                t: letter.type || 'text',
-                b: letter.label,
-                c: letter.content || '',
-                a: letter.audioData || null,
-                d: letter.releaseDate || null
-            })),
-            t: collection.createdAt
+                b: letter.label
+            };
+            if (letter.type && letter.type !== 'text') l.t = letter.type;
+            if (letter.content) l.c = letter.content;
+            if (letter.audioData) l.a = letter.audioData;
+            if (letter.releaseDate) l.d = new Date(letter.releaseDate).getTime();
+            return l;
         });
-        return LZString.compressToEncodedURIComponent(payload);
+
+        return LZString.compressToEncodedURIComponent(JSON.stringify(payload));
     } catch (e) {
         console.error("Failed to encode collection:", e);
         return null;
@@ -79,9 +85,11 @@ export const decodeCollection = (token) => {
                     label: letter.b,
                     content: letter.c || '',
                     audioData: letter.a || null,
-                    releaseDate: letter.d || null
+                    // Handle both timestamp (new) and ISO string (old)
+                    releaseDate: letter.d ? (typeof letter.d === 'number' ? new Date(letter.d).toISOString() : letter.d) : null
                 })),
-                createdAt: data.t
+                // Handle both timestamp (new) and ISO string (old)
+                createdAt: data.t ? (typeof data.t === 'number' ? new Date(data.t).toISOString() : data.t) : null
             };
         }
 
@@ -139,5 +147,32 @@ export const decodeLetter = (token) => {
     } catch (e) {
         console.error("Failed to decode letter:", e);
         return null;
+    }
+};
+
+/**
+ * Shorten a long URL using TinyURL.
+ */
+export const shortenUrl = async (longUrl) => {
+    try {
+        // TinyURL does not support localhost
+        if (longUrl.includes('localhost') || longUrl.includes('127.0.0.1')) {
+            throw new Error('Local addresses (localhost) cannot be shortened. This will work once you deploy the app to a real website.');
+        }
+
+        // Using TinyURL's public API
+        const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+        if (response.ok) {
+            return await response.text();
+        }
+
+        if (longUrl.length > 2000) {
+            throw new Error('Collection is too large to shorten (likely due to audio or long text). The long link will still work!');
+        }
+
+        throw new Error('TinyURL service is currently unavailable.');
+    } catch (e) {
+        console.error("Shortening failed:", e);
+        throw e; // Rethrow to handle in UI
     }
 };
