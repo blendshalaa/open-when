@@ -1,0 +1,208 @@
+.audio-recorder {
+    background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Cassette Body */
+.cassette-body {
+    background: linear-gradient(180deg, #f5e6c8, #e8d4a8);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 2px solid #c4a86a;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.cassette-label {
+    text-align: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #c4a86a;
+}
+
+.cassette-title {
+    display: block;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #4a3a2a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.cassette-duration {
+    font-size: 0.75rem;
+    color: #7a6a5a;
+}
+
+/* Reels */
+.cassette-reels {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.reel {
+    width: 45px;
+    height: 45px;
+    background: #2a2a2a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #1a1a1a;
+}
+
+.reel.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.reel-center {
+    width: 15px;
+    height: 15px;
+    background: #4a4a4a;
+    border-radius: 50%;
+    border: 2px solid #3a3a3a;
+}
+
+.tape-window {
+    width: 60px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.recording-indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #ff4444;
+    font-size: 0.7rem;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+.rec-dot {
+    width: 8px;
+    height: 8px;
+    background: #ff4444;
+    border-radius: 50%;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* Controls */
+.recorder-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.record-btn {
+    padding: 12px 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.record-btn:not(.recording) {
+    background: linear-gradient(145deg, #cc3333, #aa2222);
+    color: white;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.record-btn:not(.recording):hover {
+    background: linear-gradient(145deg, #dd4444, #bb3333);
+    transform: scale(1.05);
+}
+
+.record-btn.recording {
+    background: linear-gradient(145deg, #555, #444);
+    color: white;
+    animation: recording-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes recording-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+    }
+}
+
+.playback-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.audio-preview {
+    width: 100%;
+    height: 40px;
+    border-radius: 20px;
+}
+
+.audio-preview::-webkit-media-controls-panel {
+    background: #3a3a3a;
+}
+
+.delete-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid #ff6666;
+    color: #ff6666;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+    background: #ff6666;
+    color: white;
+}
+
+.time-remaining {
+    font-size: 0.8rem;
+    color: #888;
+}

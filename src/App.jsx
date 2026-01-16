@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CreateLetter from './pages/CreateLetter';
-import ViewLetter from './pages/ViewLetter';
+import CreateCollection from './pages/CreateCollection';
+import ViewCollection from './pages/ViewCollection';
 import './index.css';
 
 function App() {
@@ -9,8 +9,8 @@ function App() {
     <Router>
       <div className="app-container">
         <Routes>
-          <Route path="/" element={<CreateLetter />} />
-          <Route path="/letter/:token" element={<ViewLetter />} />
+          <Route path="/" element={<CreateCollection />} />
+          <Route path="/:token" element={<ViewCollection />} />
         </Routes>
       </div>
     </Router>

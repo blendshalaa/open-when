@@ -2,7 +2,6 @@ import LZString from 'lz-string';
 
 /**
  * Simple hash function to generate a consistent ID from content.
- * This allows us to track "opened" status without storing the ID in the URL.
  */
 const hashString = (str) => {
     let hash = 0;
@@ -15,9 +14,105 @@ const hashString = (str) => {
 };
 
 /**
- * Encode letter data into a highly compressed string.
- * Format: recipient|label|content
+ * Generate a unique ID.
  */
+export const generateId = () => {
+    return Math.random().toString(36).substr(2, 8);
+};
+
+/**
+ * Encode collection data into a compressed URL-safe string.
+ * Format: JSON compressed with LZ-String
+ * 
+ * Letter schema:
+ * - i: id
+ * - t: type ('text' | 'voice')
+ * - b: label
+ * - c: content (for text)
+ * - a: audioData (for voice, base64)
+ * - d: releaseDate (timestamp or null)
+ */
+export const encodeCollection = (collection) => {
+    try {
+        const payload = JSON.stringify({
+            i: collection.id,
+            n: collection.name || '',
+            r: collection.recipient || '',
+            l: collection.letters.map(letter => ({
+                i: letter.id,
+                t: letter.type || 'text',
+                b: letter.label,
+                c: letter.content || '',
+                a: letter.audioData || null,
+                d: letter.releaseDate || null
+            })),
+            t: collection.createdAt
+        });
+        return LZString.compressToEncodedURIComponent(payload);
+    } catch (e) {
+        console.error("Failed to encode collection:", e);
+        return null;
+    }
+};
+
+/**
+ * Decode a compressed string back into collection data.
+ */
+export const decodeCollection = (token) => {
+    if (!token) return null;
+
+    try {
+        const decompressed = LZString.decompressFromEncodedURIComponent(token);
+        if (!decompressed) return null;
+
+        const data = JSON.parse(decompressed);
+
+        // Handle new collection format
+        if (data.l && Array.isArray(data.l)) {
+            return {
+                id: data.i,
+                name: data.n || '',
+                recipient: data.r || '',
+                letters: data.l.map(letter => ({
+                    id: letter.i,
+                    type: letter.t || 'text',
+                    label: letter.b,
+                    content: letter.c || '',
+                    audioData: letter.a || null,
+                    releaseDate: letter.d || null
+                })),
+                createdAt: data.t
+            };
+        }
+
+        // Fallback: try legacy single letter format (pipe-delimited)
+        if (decompressed.includes('|')) {
+            const [recipient, label, content] = decompressed.split('|');
+            const legacyId = hashString(decompressed);
+            return {
+                id: legacyId,
+                name: '',
+                recipient: recipient || '',
+                letters: [{
+                    id: legacyId + '_0',
+                    type: 'text',
+                    label: label,
+                    content: content,
+                    audioData: null,
+                    releaseDate: null
+                }],
+                createdAt: null
+            };
+        }
+
+        return null;
+    } catch (e) {
+        console.error("Failed to decode collection:", e);
+        return null;
+    }
+};
+
+// Legacy functions for backward compatibility
 export const encodeLetter = (data) => {
     try {
         const payload = `${data.recipient || ''}|${data.label}|${data.content}`;
@@ -28,9 +123,6 @@ export const encodeLetter = (data) => {
     }
 };
 
-/**
- * Decode a compressed string back into letter data.
- */
 export const decodeLetter = (token) => {
     if (!token) return null;
 
@@ -38,45 +130,14 @@ export const decodeLetter = (token) => {
         const decompressed = LZString.decompressFromEncodedURIComponent(token);
 
         if (decompressed && decompressed.includes('|')) {
-            // New delimited format: recipient|label|content
             const [recipient, label, content] = decompressed.split('|');
             const data = { recipient, label, content };
-            // Generate ID on the fly for storage tracking
             data.id = hashString(decompressed);
             return data;
-        } else {
-            // Fallback for JSON formats (Base64 or LZ-JSON)
-            let jsonString = decompressed;
-            if (!jsonString) {
-                let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
-                while (base64.length % 4) base64 += '=';
-                jsonString = decodeURIComponent(escape(atob(base64)));
-            }
-
-            const data = JSON.parse(jsonString);
-
-            // Handle short-key JSON format
-            if (data.i || data.c || data.l) {
-                return {
-                    id: data.i,
-                    recipient: data.r,
-                    label: data.l,
-                    content: data.c,
-                    createdAt: data.t
-                };
-            }
-            return data;
         }
+        return null;
     } catch (e) {
         console.error("Failed to decode letter:", e);
         return null;
     }
-};
-
-/**
- * Generate a unique ID (only used for initial creation if needed, 
- * but now we mostly use hashString).
- */
-export const generateId = () => {
-    return Math.random().toString(36).substr(2, 6);
 };

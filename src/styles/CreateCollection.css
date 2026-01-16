@@ -1,0 +1,430 @@
+.create-page {
+    width: 100%;
+    max-width: 700px;
+    padding: 40px;
+    transform: rotate(-0.5deg);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--paper-aged);
+    padding-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+    color: var(--ink-blue);
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    color: var(--pencil-gray);
+    font-style: italic;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.collection-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 25px;
+    border-bottom: 1px dashed var(--paper-aged);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    color: var(--ink-faded);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Type Toggle */
+.type-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.type-btn {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid var(--paper-aged);
+    background: transparent;
+    color: var(--ink-faded);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+}
+
+.type-btn:hover {
+    border-color: var(--ink-blue);
+    color: var(--ink-blue);
+}
+
+.type-btn.active {
+    background: var(--ink-blue);
+    color: white;
+    border-color: var(--ink-blue);
+}
+
+/* Schedule Section */
+.schedule-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed var(--paper-aged);
+}
+
+.schedule-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--ink-faded);
+}
+
+.schedule-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--ink-blue);
+}
+
+.date-picker-wrapper {
+    margin-top: 12px;
+    padding-left: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.date-picker {
+    padding: 10px 15px;
+    border: 2px solid var(--paper-aged);
+    background: white;
+    font-family: var(--font-hand);
+    font-size: 1rem;
+    color: var(--ink-blue);
+    border-radius: 4px;
+    max-width: 200px;
+}
+
+.date-picker:focus {
+    outline: none;
+    border-color: var(--ink-blue);
+}
+
+.date-hint {
+    font-size: 0.75rem;
+    color: var(--pencil-gray);
+    font-style: italic;
+}
+
+/* Letters Section */
+.letters-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    color: var(--ink-blue);
+    margin: 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--ink-blue);
+    display: inline-block;
+}
+
+.letters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Letter Card */
+.letter-card {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--paper-aged);
+    padding: 25px;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.letter-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.letter-card:nth-child(odd) {
+    transform: rotate(0.3deg);
+}
+
+.letter-card:nth-child(even) {
+    transform: rotate(-0.3deg);
+}
+
+.letter-card:hover {
+    transform: rotate(0deg);
+}
+
+.letter-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--paper-aged);
+}
+
+.letter-number {
+    font-family: var(--font-hand);
+    font-size: 1.1rem;
+    color: var(--ink-blue);
+    font-weight: bold;
+}
+
+.remove-letter-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--stamp-red);
+    background: transparent;
+    color: var(--stamp-red);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+}
+
+.remove-letter-btn:hover {
+    background: var(--stamp-red);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Add Letter Button */
+.add-letter-btn {
+    padding: 15px 25px;
+    background: transparent;
+    border: 2px dashed var(--ink-blue);
+    color: var(--ink-blue);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    align-self: center;
+}
+
+.add-letter-btn:hover {
+    background: var(--ink-blue);
+    color: white;
+    border-style: solid;
+}
+
+.handwritten-textarea {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.8;
+    background-image: linear-gradient(transparent 95%, var(--paper-aged) 95%);
+    background-size: 100% 2em;
+}
+
+.seal-button {
+    margin-top: 20px;
+    padding: 18px 35px;
+    background-color: var(--stamp-red);
+    color: white;
+    border: none;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    font-size: 1.2rem;
+    align-self: center;
+    box-shadow: 2px 4px 8px rgba(192, 57, 43, 0.3);
+    transform: rotate(2deg);
+}
+
+.seal-button:hover {
+    transform: rotate(0deg) scale(1.05);
+}
+
+.seal-button:disabled {
+    background-color: var(--pencil-gray);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Success State */
+.success-container {
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.envelopes-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: 180px;
+    margin-bottom: 20px;
+}
+
+.envelope-mini {
+    width: 140px;
+    height: 100px;
+    background-color: var(--paper-aged);
+    position: absolute;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.envelope-mini.voice {
+    background: linear-gradient(135deg, var(--paper-aged), #f5deb3);
+}
+
+.envelope-mini.scheduled {
+    border: 2px solid #b8860b;
+}
+
+.stamp-mini {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 35px;
+    border: 1px dashed var(--stamp-red);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--stamp-red);
+    font-size: 0.5rem;
+    font-weight: bold;
+    transform: rotate(5deg);
+    opacity: 0.7;
+}
+
+.voice-badge,
+.lock-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 0.9rem;
+}
+
+.label-mini {
+    font-family: var(--font-hand);
+    font-size: 0.75rem;
+    color: var(--ink-blue);
+    text-align: center;
+    margin: 0;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.more-letters {
+    position: absolute;
+    right: -60px;
+    color: var(--ink-faded);
+    font-style: italic;
+}
+
+.link-section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px dashed var(--pencil-gray);
+}
+
+.collection-meta {
+    margin-bottom: 15px;
+    color: var(--ink-faded);
+}
+
+.link-box {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.link-box input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--paper-aged);
+    background: white;
+    color: var(--ink-faded);
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.link-box button {
+    padding: 8px 15px;
+    background: var(--ink-blue);
+    color: white;
+    border: none;
+}
+
+.create-another {
+    background: transparent;
+    border: none;
+    color: var(--ink-faded);
+    text-decoration: underline;
+    margin-top: 10px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .create-page {
+        padding: 20px;
+        transform: none;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .letter-card {
+        padding: 15px;
+    }
+
+    .envelopes-preview {
+        transform: scale(0.85);
+    }
+
+    .type-toggle {
+        flex-direction: column;
+    }
+}

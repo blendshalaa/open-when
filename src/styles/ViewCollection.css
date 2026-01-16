@@ -1,0 +1,465 @@
+.view-collection-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+}
+
+/* Collection Header */
+.collection-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px 40px;
+    background: var(--paper-cream);
+    box-shadow: var(--shadow-soft);
+    transform: rotate(-1deg);
+}
+
+.collection-name {
+    font-size: 2rem;
+    color: var(--ink-blue);
+    margin: 0 0 5px 0;
+    font-family: var(--font-hand);
+}
+
+.collection-recipient {
+    color: var(--ink-faded);
+    margin: 0;
+    font-style: italic;
+}
+
+/* Envelopes Container - Scattered Layout */
+.envelopes-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    height: 70vh;
+    min-height: 500px;
+}
+
+/* Individual Envelope */
+.envelope {
+    position: absolute;
+    width: 220px;
+    height: 150px;
+    background-color: var(--paper-aged);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.envelope:hover {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1.08) !important;
+    box-shadow: 8px 8px 25px rgba(0, 0, 0, 0.25);
+    z-index: 100 !important;
+}
+
+.envelope.opened {
+    opacity: 0.75;
+}
+
+.envelope.opened:hover {
+    opacity: 1;
+}
+
+/* Voice envelope styling */
+.envelope.voice {
+    background: linear-gradient(135deg, var(--paper-aged), #f5deb3);
+}
+
+.envelope.voice::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid #daa520;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Locked envelope styling */
+.envelope.locked {
+    cursor: not-allowed;
+    filter: saturate(0.7);
+}
+
+.envelope.locked:hover {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1.02) !important;
+}
+
+.locked-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(139, 90, 43, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.wax-seal {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(145deg, #8b0000, #a52a2a);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow:
+        2px 2px 5px rgba(0, 0, 0, 0.3),
+        inset -2px -2px 5px rgba(0, 0, 0, 0.2),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.1);
+    border: 2px solid #700000;
+}
+
+.seal-icon {
+    font-size: 1.2rem;
+    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+}
+
+.lock-info {
+    margin-top: 8px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.lock-date {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--ink-blue);
+    font-weight: bold;
+}
+
+.lock-countdown {
+    display: block;
+    font-size: 0.6rem;
+    color: var(--pencil-gray);
+}
+
+/* Voice indicator on envelope */
+.voice-indicator {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 1rem;
+    z-index: 5;
+}
+
+/* Envelope Flaps */
+.envelope .flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 110px solid transparent;
+    border-right: 110px solid transparent;
+    border-top: 80px solid #e6dabf;
+    z-index: 3;
+}
+
+.envelope .pocket {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 110px solid transparent;
+    border-right: 110px solid transparent;
+    border-bottom: 70px solid #f5ebd9;
+    z-index: 2;
+}
+
+.envelope-content {
+    position: relative;
+    z-index: 4;
+    text-align: center;
+    padding: 15px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.envelope .stamp {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 45px;
+    border: 1px dashed var(--stamp-red);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--stamp-red);
+    font-weight: bold;
+    transform: rotate(5deg);
+    opacity: 0.7;
+    font-size: 0.6rem;
+}
+
+.envelope .to-text {
+    font-family: var(--font-hand);
+    font-size: 0.85rem;
+    margin: 0 0 5px 0;
+    color: var(--ink-blue);
+}
+
+.envelope .open-when-text {
+    font-family: var(--font-hand);
+    font-size: 0.95rem;
+    color: var(--ink-blue);
+    margin: 0;
+    line-height: 1.3;
+    max-width: 90%;
+    border-bottom: 1px solid var(--ink-blue);
+    padding-bottom: 3px;
+}
+
+.envelope .click-hint {
+    position: absolute;
+    bottom: 10px;
+    font-size: 0.65rem;
+    color: var(--pencil-gray);
+    opacity: 0;
+    transition: opacity 0.3s;
+    margin: 0;
+}
+
+.envelope:hover .click-hint {
+    opacity: 1;
+}
+
+.opened-badge {
+    position: absolute;
+    bottom: 10px;
+    font-size: 0.7rem;
+    color: var(--pencil-gray);
+    font-style: italic;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* Letter View */
+.letter-view {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.back-button {
+    align-self: flex-start;
+    background: transparent;
+    border: none;
+    color: var(--ink-faded);
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    transition: color 0.2s ease;
+}
+
+.back-button:hover {
+    color: var(--ink-blue);
+}
+
+.letter-paper {
+    width: 100%;
+    background-color: var(--paper-cream);
+    padding: 50px;
+    box-shadow: var(--shadow-deep);
+    min-height: 400px;
+    position: relative;
+    transform: rotate(0.3deg);
+}
+
+.letter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--paper-aged);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.letter-label {
+    font-family: var(--font-hand);
+    font-size: 1.2rem;
+    color: var(--ink-blue);
+    font-weight: bold;
+}
+
+.letter-header .date {
+    color: var(--ink-faded);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.letter-body {
+    font-size: 1.1rem;
+    white-space: pre-wrap;
+    margin-bottom: 40px;
+    line-height: 1.8;
+}
+
+.letter-body p {
+    margin: 0 0 1em 0;
+}
+
+/* Voice letter content */
+.voice-letter-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.voice-intro {
+    font-style: italic;
+    color: var(--ink-faded);
+    margin: 0;
+}
+
+.letter-footer {
+    text-align: right;
+    font-family: var(--font-hand);
+    font-size: 1.2rem;
+    padding-top: 20px;
+    border-top: 1px solid var(--paper-aged);
+}
+
+/* Progress Indicator */
+.progress-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--paper-cream);
+    padding: 10px 20px;
+    box-shadow: var(--shadow-soft);
+    font-size: 0.9rem;
+    color: var(--ink-faded);
+    border-radius: 20px;
+}
+
+/* Error and Loading States */
+.error-page {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.error-page h1 {
+    color: var(--ink-blue);
+    margin-bottom: 10px;
+}
+
+.error-page p {
+    color: var(--pencil-gray);
+}
+
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-faded);
+    font-style: italic;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .envelopes-container {
+        height: auto;
+        min-height: auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .envelope {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        transform: rotate(var(--rotation, 0deg)) !important;
+    }
+
+    .envelope:hover {
+        transform: rotate(0deg) scale(1.05) !important;
+    }
+
+    .letter-paper {
+        padding: 30px 20px;
+    }
+
+    .collection-header {
+        padding: 15px 25px;
+    }
+
+    .collection-name {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .envelope {
+        width: 180px;
+        height: 130px;
+    }
+
+    .envelope .flap {
+        border-left-width: 90px;
+        border-right-width: 90px;
+        border-top-width: 65px;
+    }
+
+    .envelope .pocket {
+        border-left-width: 90px;
+        border-right-width: 90px;
+        border-bottom-width: 55px;
+    }
+
+    .wax-seal {
+        width: 40px;
+        height: 40px;
+    }
+
+    .seal-icon {
+        font-size: 1rem;
+    }
+}
