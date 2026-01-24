@@ -160,19 +160,60 @@ export const shortenUrl = async (longUrl) => {
             throw new Error('Local addresses (localhost) cannot be shortened. This will work once you deploy the app to a real website.');
         }
 
-        // Using TinyURL's public API
+        // TinyURL's public API
         const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
         if (response.ok) {
             return await response.text();
         }
 
         if (longUrl.length > 2000) {
-            throw new Error('Collection is too large to shorten (likely due to audio or long text). The long link will still work!');
+            throw new Error('Collection is too large to shorten (likely due to audio or long text). The long link will still work, or try saving to cloud!');
         }
 
         throw new Error('TinyURL service is currently unavailable.');
     } catch (e) {
         console.error("Shortening failed:", e);
         throw e; // Rethrow to handle in UI
+    }
+};
+
+/**
+ * Upload collection data to Bytebin (cloud storage).
+ * Returns the key (ID).
+ */
+export const uploadToBytebin = async (data) => {
+    try {
+        const response = await fetch('https://bytebin.lucko.me/post', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            return result.key;
+        }
+        throw new Error('Failed to upload to cloud storage');
+    } catch (e) {
+        console.error("Cloud upload failed:", e);
+        throw e;
+    }
+};
+
+/**
+ * Fetch collection data from Bytebin using the key.
+ */
+export const fetchFromBytebin = async (key) => {
+    try {
+        const response = await fetch(`https://bytebin.lucko.me/${key}`);
+        if (response.ok) {
+            return await response.json();
+        }
+        return null;
+    } catch (e) {
+        console.error("Cloud fetch failed:", e);
+        return null;
     }
 };

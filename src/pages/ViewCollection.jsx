@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { decodeCollection } from '../utils/urlUtils';
+import { decodeCollection, fetchFromBytebin } from '../utils/urlUtils';
 import { storage } from '../utils/storage';
 import AudioPlayer from '../components/AudioPlayer';
 import '../styles/ViewCollection.css';
@@ -22,21 +22,35 @@ const ViewCollection = () => {
     }, []);
 
     useEffect(() => {
-        const decoded = decodeCollection(token);
-        if (decoded) {
-            setCollection(decoded);
-            // Check opened state for each letter
-            const openedState = {};
-            decoded.letters.forEach(letter => {
-                openedState[letter.id] = {
-                    opened: storage.isLetterOpened(decoded.id, letter.id),
-                    timestamp: storage.getLetterOpenTimestamp(decoded.id, letter.id)
-                };
-            });
-            setOpenedLetters(openedState);
-        } else {
-            setError(true);
-        }
+        const loadCollection = async () => {
+            let decoded = null;
+
+            // Check if it's a cloud link (starts with c-)
+            if (token.startsWith('c-')) {
+                const key = token.substring(2);
+                decoded = await fetchFromBytebin(key);
+            } else {
+                // Try decoding as legacy LZ string
+                decoded = decodeCollection(token);
+            }
+
+            if (decoded) {
+                setCollection(decoded);
+                // Check opened state for each letter
+                const openedState = {};
+                decoded.letters.forEach(letter => {
+                    openedState[letter.id] = {
+                        opened: storage.isLetterOpened(decoded.id, letter.id),
+                        timestamp: storage.getLetterOpenTimestamp(decoded.id, letter.id)
+                    };
+                });
+                setOpenedLetters(openedState);
+            } else {
+                setError(true);
+            }
+        };
+
+        loadCollection();
     }, [token]);
 
     // Generate scattered positions for envelopes

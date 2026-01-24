@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { encodeCollection, generateId, shortenUrl } from '../utils/urlUtils';
+import { encodeCollection, generateId, shortenUrl, uploadToBytebin } from '../utils/urlUtils';
 import AudioRecorder from '../components/AudioRecorder';
 import '../styles/CreateCollection.css';
 
@@ -14,6 +14,7 @@ const CreateCollection = () => {
     const [isShortening, setIsShortening] = useState(false);
     const [shorteningError, setShorteningError] = useState(null);
     const [isCopied, setIsCopied] = useState(false);
+    const [currentCollectionData, setCurrentCollectionData] = useState(null);
 
     const addLetter = () => {
         setLetters([...letters, {
@@ -62,7 +63,7 @@ const CreateCollection = () => {
         });
     };
 
-    const handleCreate = () => {
+    const handleCreate = async () => {
         if (!isValid()) return;
 
         const collectionData = {
@@ -80,9 +81,33 @@ const CreateCollection = () => {
             createdAt: new Date().toISOString(),
         };
 
+        setCurrentCollectionData(collectionData);
+        setShorteningError(null);
+
+        // Encode to check size
         const token = encodeCollection(collectionData);
-        const link = `${window.location.origin}/${token}`;
-        setGeneratedLink(link);
+
+        // If too large for URL (approx 2000 chars), auto-upload to cloud
+        if (token && token.length > 2000) {
+            setIsShortening(true);
+            try {
+                const key = await uploadToBytebin(collectionData);
+                const cloudLink = `${window.location.origin}/c-${key}`;
+                setGeneratedLink(cloudLink);
+                // It's already short, so set as shortLink too to prevent "Shorten" button
+                setShortLink(cloudLink);
+            } catch (e) {
+                console.error(e);
+                setShorteningError("Failed to auto-save to cloud. Try again.");
+                // Fallback to long link if possible, though it might break
+                setGeneratedLink(`${window.location.origin}/${token}`);
+            } finally {
+                setIsShortening(false);
+            }
+        } else {
+            const link = `${window.location.origin}/${token}`;
+            setGeneratedLink(link);
+        }
     };
 
     const copyToClipboard = (text) => {
@@ -95,12 +120,24 @@ const CreateCollection = () => {
         setIsShortening(true);
         setShorteningError(null);
         try {
+            // First try TinyURL (standard shortening)
             const short = await shortenUrl(generatedLink);
             if (short) {
                 setShortLink(short);
             }
         } catch (e) {
-            setShorteningError(e.message);
+            console.log("TinyURL failed, trying cloud upload...", e);
+            // Fallback: Upload to cloud if TinyURL fails (e.g. localhost or too big)
+            if (currentCollectionData) {
+                try {
+                    const key = await uploadToBytebin(currentCollectionData);
+                    setShortLink(`${window.location.origin}/c-${key}`);
+                } catch (uploadError) {
+                    setShorteningError("Could not shorten link (Cloud upload failed).");
+                }
+            } else {
+                setShorteningError(e.message);
+            }
         } finally {
             setIsShortening(false);
         }
