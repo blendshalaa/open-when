@@ -1,16 +1,71 @@
-# React + Vite
+# Open When... 💌
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A digital reimagining of the classic "Open When" letters, designed to feel analog, personal, and timeless.
 
-Currently, two official plugins are available:
+**Open When** is a web application that allows you to create thoughtful collections of digital letters for your loved ones. Whether it's for a long-distance partner, a best friend, or a future self, these letters are sealed in digital envelopes and can be scheduled to open only when the time is right.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Create Collection Preview](./screenshots/create-preview.png)
+*(Add a screenshot of the creation page here)*
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+*   **✉️ Digital Envelopes**: A tactile, skeuomorphic interface where letters feel like real objects scattered on a desk.
+*   **🎤 Voice Notes**: Don't just write; speak. Record meaningful voice messages directly in the browser.
+*   **⏳ Time Capsules**: Schedule letters to unlock on specific future dates (e.g., "Open on your birthday").
+*   **☁️ Cloud Sharing**: Large collections (especially with voice) are automatically uploaded to the cloud for a short, shareable one-line link.
+*   **🔒 Secure & Private**: Letters are encoded or stored securely with unique IDs.
+*   **📱 Mobile Friendly**: A responsive design that works perfectly on phones for on-the-go comfort.
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+*   **Frontend**: React 19, Vite
+*   **Routing**: React Router v7
+*   **Styling**: Pure CSS (Glassmorphism + Paper Textures)
+*   **Compression**: LZ-String (for text-based URL sharing)
+*   **Storage**: Bytebin (for cloud persistence of large media)
+*   **Audio**: MediaRecorder API
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+*   Node.js (v18 or higher)
+*   npm
+
+### Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/blendshalaa/open-when.git
+    cd open-when
+    ```
+
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+
+3.  Run the development server:
+    ```bash
+    npm run dev
+    ```
+
+4.  Open `http://localhost:5173` in your browser.
+
+## 📸 Screenshots
+
+### The Recipient Experience
+Recipients see a collection of sealed envelopes. They can only open what is unlocked.
+![Recipient View](./screenshots/recipient-view.png)
+
+### Writing a Letter
+Choose between text or voice, label your letter, and seal it.
+![Writing Interface](./screenshots/writing-interface.png)
+
+## 🤝 Contributing
+
+This is a personal portfolio project. Feel free to fork and make it your own!
+
+## 📄 License
+
+MIT
