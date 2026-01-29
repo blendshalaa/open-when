@@ -5,7 +5,6 @@
 **Open When** is a web application that allows you to create thoughtful collections of digital letters for your loved ones. Whether it's for a long-distance partner, a best friend, or a future self, these letters are sealed in digital envelopes and can be scheduled to open only when the time is right.
 
 ![Create Collection Preview](./screenshots/create-preview.png)
-*(Add a screenshot of the creation page here)*
 
 ## ✨ Features
 
@@ -54,13 +53,17 @@
 
 ## 📸 Screenshots
 
+### Writing a Letter
+Choose between text or voice, label your letter, and seal it.
+![Writing Interface](./screenshots/writing-interface.png)
+
 ### The Recipient Experience
 Recipients see a collection of sealed envelopes. They can only open what is unlocked.
 ![Recipient View](./screenshots/recipient-view.png)
 
-### Writing a Letter
-Choose between text or voice, label your letter, and seal it.
-![Writing Interface](./screenshots/writing-interface.png)
+### Opening a Letter
+Experience the joy of opening a letter with a heartfelt message or voice note.
+![Open Letter](./screenshots/open-letter.png)
 
 ## 🤝 Contributing
 
